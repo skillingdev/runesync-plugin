@@ -1,5 +1,6 @@
 package com.example;
 
+import com.google.gson.Gson;
 import com.google.inject.Provides;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.Varbits;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.account.SessionManager;
 import net.runelite.client.config.ConfigManager;
@@ -20,6 +22,7 @@ import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.RuneScapeProfileChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.loottracker.LootReceived;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -27,6 +30,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @Slf4j
 @PluginDescriptor(name = "Example")
@@ -43,12 +47,12 @@ public class ExamplePlugin extends Plugin {
   @Inject
   private ConfigManager configManager;
 
+  @Inject
   private OkHttpClient httpClient;
 
   @Override
   protected void startUp() throws Exception {
     log.info("Example started!");
-    httpClient = new OkHttpClient();
   }
 
   @Override
@@ -64,36 +68,51 @@ public class ExamplePlugin extends Plugin {
   }
 
   @Subscribe
-  public void onNpcLootReceived(final NpcLootReceived npcLootReceived) {
-    RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), "{\"page\": 42}");
-    Request request = new Request.Builder()
-        .url("www.google.com")
-        .post(body)
-        .build();
-
-    httpClient.newCall(request).enqueue(new Callback() {
-      @Override
-      public void onFailure(Call call, IOException e) {
-        log.debug("Error submitting webhook", e);
-      }
-
-      @Override
-      public void onResponse(Call call, Response response) throws IOException {
-        log.info(response.body().string());
-        response.close();
-      }
-    });
-
-    List<RuneScapeProfile> rsProfiles = configManager.getRSProfiles();
-    for (RuneScapeProfile profile : rsProfiles) {
-      log.info(profile.toString());
-    }
-    log.info(String.valueOf(client.getAccountHash()));
-    RuneScapeProfileType profileType = RuneScapeProfileType.getCurrent(client);
-    log.info(profileType.toString());
-    log.info(npcLootReceived.toString());
+  public void onLootReceived(final LootReceived lootReceived) {
+    log.info("HERE! HERE");
+    log.info(lootReceived.toString());
+    log.info("ardy easy: " + client.getVarbitValue(Varbits.DIARY_ARDOUGNE_EASY));
+    log.info("ardy elite: " + client.getVarbitValue(Varbits.DIARY_ARDOUGNE_ELITE));
   }
 
+  /*
+   * @Subscribe
+   * public void onNpcLootReceived(final NpcLootReceived npcLootReceived) {
+   * Gson gson = new Gson();
+   * RequestBody body =
+   * RequestBody.create(MediaType.get("application/json; charset=utf-8"),
+   * gson.toJson(new TestRequest()));
+   * Request request = new Request.Builder()
+   * .url(
+   * "www.google.com")
+   * .post(body)
+   * .build();
+   * 
+   * httpClient.newCall(request).enqueue(new Callback() {
+   * 
+   * @Override
+   * public void onFailure(Call call, IOException e) {
+   * log.debug("Error submitting request", e);
+   * }
+   * 
+   * @Override
+   * public void onResponse(Call call, Response response) throws IOException {
+   * String body = response.body().string();
+   * log.info(gson.fromJson(body, TestResponse.class).toString());
+   * response.close();
+   * }
+   * });
+   * 
+   * List<RuneScapeProfile> rsProfiles = configManager.getRSProfiles();
+   * for (RuneScapeProfile profile : rsProfiles) {
+   * log.info(profile.toString());
+   * }
+   * log.info(String.valueOf(client.getAccountHash()));
+   * RuneScapeProfileType profileType = RuneScapeProfileType.getCurrent(client);
+   * log.info(profileType.toString());
+   * log.info(npcLootReceived.toString());
+   * }
+   */
   @Provides
   ExampleConfig provideConfig(ConfigManager configManager) {
     return configManager.getConfig(ExampleConfig.class);
