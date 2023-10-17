@@ -20,6 +20,8 @@ import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.events.RuneScapeProfileChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -69,11 +71,18 @@ public class ExamplePlugin extends Plugin {
         .post(body)
         .build();
 
-    try (Response response = httpClient.newCall(request).execute()) {
-      log.info(response.body().string());
-    } catch (IOException exception) {
-      log.info("REQUEST FAILED");
-    }
+    httpClient.newCall(request).enqueue(new Callback() {
+      @Override
+      public void onFailure(Call call, IOException e) {
+        log.debug("Error submitting webhook", e);
+      }
+
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        log.info(response.body().string());
+        response.close();
+      }
+    });
 
     List<RuneScapeProfile> rsProfiles = configManager.getRSProfiles();
     for (RuneScapeProfile profile : rsProfiles) {
