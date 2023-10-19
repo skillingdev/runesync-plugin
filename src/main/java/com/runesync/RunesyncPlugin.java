@@ -1,4 +1,4 @@
-package com.example;
+package com.runesync;
 
 import com.google.gson.Gson;
 import com.google.inject.Provides;
@@ -23,8 +23,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 @Slf4j
-@PluginDescriptor(name = "Example")
-public class ExamplePlugin extends Plugin {
+@PluginDescriptor(name = "RuneSync")
+public class RunesyncPlugin extends Plugin {
   @Inject
   SessionManager sessionManager;
 
@@ -41,12 +41,12 @@ public class ExamplePlugin extends Plugin {
 
   @Override
   protected void startUp() throws Exception {
-    log.info("Example started!");
+    log.info("RuneSync started!");
   }
 
   @Override
   protected void shutDown() throws Exception {
-    log.info("Example stopped!");
+    log.info("RuneSync stopped!");
   }
 
   @Subscribe
@@ -71,7 +71,7 @@ public class ExamplePlugin extends Plugin {
     log.info("calling SetupUser for: " + currentUser.toString());
 
     Request request = new Request.Builder()
-        .url("https://runesync.vercel.app/api/SetupUser")
+        .url("https://runesync.com/api/setup-user")
         .post(body)
         .build();
 
@@ -97,7 +97,7 @@ public class ExamplePlugin extends Plugin {
   }
 
   @Provides
-  ExampleConfig provideConfig(ConfigManager configManager) {
-    return configManager.getConfig(ExampleConfig.class);
+  RunesyncConfig provideConfig(ConfigManager configManager) {
+    return configManager.getConfig(RunesyncConfig.class);
   }
 }

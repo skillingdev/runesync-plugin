@@ -1,4 +1,4 @@
-package com.example;
+package com.runesync;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
