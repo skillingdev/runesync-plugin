@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LootLocation {
+public class EventLocation {
     private int x;
     private int y;
     private int plane;

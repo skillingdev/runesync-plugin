@@ -12,5 +12,5 @@ public class LootEntry {
     private int itemId;
     private String sourceName;
     private int sourceLevel;
-    private LootLocation location;
+    private EventLocation location;
 }

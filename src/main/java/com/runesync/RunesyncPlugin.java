@@ -24,6 +24,7 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
+import net.runelite.http.api.worlds.WorldType;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -64,6 +65,11 @@ public class RunesyncPlugin extends Plugin {
 
   @Subscribe
   private void onPlayerChanged(PlayerChanged playerChanged) {
+    if (!client.getWorldType().contains(WorldType.SEASONAL)) {
+      log.info("RuneSync is for Leagues 4 only - log in to an appropriate world to get started!");
+      return;
+    }
+
     if (playerChanged.getPlayer() != client.getLocalPlayer() || client.getAccountHash() == -1) {
       return;
     }
@@ -109,11 +115,14 @@ public class RunesyncPlugin extends Plugin {
       return;
     }
 
+    if (!client.getWorldType().contains(WorldType.SEASONAL)) {
+      log.info("RuneSync is for Leagues 4 only - log in to an appropriate world to get started!");
+      return;
+    }
+
     log.debug("Received loot. Processing...");
 
     DateTime timestamp = DateTime.now();
-    timestamp.toString();
-
     List<LootEntry> entries = new ArrayList<>();
 
     for (ItemStack stack : lootReceived.getItems()) {
@@ -129,7 +138,7 @@ public class RunesyncPlugin extends Plugin {
       for (int i = 0; i < stack.getQuantity(); i++) {
         entries.add(new LootEntry(timestamp.toString(), String.valueOf(client.getAccountHash()),
             itemComposition.getName(), stack.getId(), lootReceived.getName(), lootReceived.getCombatLevel(),
-            new LootLocation(point.getX(), point.getY(), point.getPlane(), point.getRegionID())));
+            new EventLocation(point.getX(), point.getY(), point.getPlane(), point.getRegionID())));
       }
     }
 
@@ -156,7 +165,10 @@ public class RunesyncPlugin extends Plugin {
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        log.debug("record-loot completed.");
+        if (!response.isSuccessful()) {
+          log.debug("Error submitting loot record.");
+        }
+
         response.close();
       }
     });
