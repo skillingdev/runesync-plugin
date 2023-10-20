@@ -38,5 +38,5 @@ task runTest(type: Exec) {
     dependsOn build
     group = "Execution"
     description = "Run the main class with JavaExecTask"
-    commandLine "java", "-ea", "-classpath", sourceSets.test.runtimeClasspath.getAsPath(), "com.example.ExamplePluginTest"
+    commandLine "java", "-ea", "-classpath", sourceSets.test.runtimeClasspath.getAsPath(), "com.runesync.RunesyncPluginTest"
 }
