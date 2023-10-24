@@ -37,6 +37,9 @@ import okhttp3.Response;
 @PluginDescriptor(name = "RuneSync")
 public class RunesyncPlugin extends Plugin {
   @Inject
+  private RunesyncConfig config;
+
+  @Inject
   SessionManager sessionManager;
 
   @Inject
@@ -111,6 +114,10 @@ public class RunesyncPlugin extends Plugin {
 
   @Subscribe
   public void onLootReceived(final LootReceived lootReceived) {
+    if (!config.trackLoot()) {
+      return;
+    }
+
     if (client.getLocalPlayer() == null || client.getAccountHash() == -1) {
       return;
     }
