@@ -65,11 +65,6 @@ public class RunesyncPlugin extends Plugin {
 
   @Subscribe
   private void onPlayerChanged(PlayerChanged playerChanged) {
-    if (!client.getWorldType().contains(WorldType.SEASONAL)) {
-      log.info("RuneSync is for Leagues 4 only - log in to an appropriate world to get started!");
-      return;
-    }
-
     if (playerChanged.getPlayer() != client.getLocalPlayer() || client.getAccountHash() == -1) {
       return;
     }
@@ -83,6 +78,11 @@ public class RunesyncPlugin extends Plugin {
     }
 
     currentUser = user;
+
+    if (!client.getWorldType().contains(WorldType.SEASONAL)) {
+      log.info("RuneSync is for Leagues 4 only - log in to an appropriate world to get started!");
+      return;
+    }
 
     RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"),
         gson.toJson(currentUser));
