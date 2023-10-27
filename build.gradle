@@ -15,10 +15,7 @@ def runeLiteVersion = 'latest.release'
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 
-  implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
-  implementation 'com.amazonaws:aws-java-sdk-lambda'
-
-	compileOnly 'org.projectlombok:lombok:1.18.20'
+        compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
 	testImplementation 'junit:junit:4.12'
@@ -32,11 +29,4 @@ version = '1.0-SNAPSHOT'
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.release.set(11)
-}
-
-task runTest(type: Exec) {
-    dependsOn build
-    group = "Execution"
-    description = "Run the main class with JavaExecTask"
-    commandLine "java", "-ea", "-classpath", sourceSets.test.runtimeClasspath.getAsPath(), "com.runesync.RunesyncPluginTest"
 }
