@@ -4,12 +4,11 @@ import com.google.gson.Gson;
 import com.google.inject.Provides;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import org.joda.time.DateTime;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -25,6 +24,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.http.api.worlds.WorldType;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -56,16 +56,6 @@ public class RunesyncPlugin extends Plugin {
 
   private SetupUser currentUser;
 
-  @Override
-  protected void startUp() throws Exception {
-    log.info("RuneSync started!");
-  }
-
-  @Override
-  protected void shutDown() throws Exception {
-    log.info("RuneSync stopped!");
-  }
-
   @Subscribe
   private void onPlayerChanged(PlayerChanged playerChanged) {
     if (playerChanged.getPlayer() != client.getLocalPlayer() || client.getAccountHash() == -1) {
@@ -93,7 +83,7 @@ public class RunesyncPlugin extends Plugin {
     log.debug("calling setup-user for: " + currentUser.toString());
 
     Request request = new Request.Builder()
-        .url("https://runesync.com/api/setup-user")
+        .url("https://www.runesync.com/api/setup-user")
         .post(body)
         .build();
 
@@ -129,7 +119,7 @@ public class RunesyncPlugin extends Plugin {
 
     log.debug("Received loot. Processing...");
 
-    DateTime timestamp = DateTime.now();
+    Instant timestamp = Instant.now();
     List<LootEntry> entries = new ArrayList<>();
 
     for (ItemStack stack : lootReceived.getItems()) {
@@ -160,7 +150,7 @@ public class RunesyncPlugin extends Plugin {
         gson.toJson(new RecordLoot(entries)));
 
     Request request = new Request.Builder()
-        .url("https://runesync.com/api/record-loot")
+        .url("https://www.runesync.com/api/record-loot")
         .post(body)
         .build();
 
