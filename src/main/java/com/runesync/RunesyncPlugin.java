@@ -15,7 +15,6 @@ import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.PlayerChanged;
-import net.runelite.client.account.SessionManager;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -38,9 +37,6 @@ import okhttp3.Response;
 public class RunesyncPlugin extends Plugin {
   @Inject
   private RunesyncConfig config;
-
-  @Inject
-  SessionManager sessionManager;
 
   @Inject
   private Client client;
